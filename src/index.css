@@ -1,0 +1,287 @@
+@import "maplibre-gl/dist/maplibre-gl.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-void: 220 100% 99%;
+    --bg-panel: 220 100% 97%;
+    --border-soft: 220 15% 90% / 0.3;
+    --accent-sage: 172 100% 21%;
+    --accent-amber: 38 100% 79%;
+    --accent-clay: 0 76% 41%;
+    --accent-forest: 172 100% 21%;
+  }
+
+  body {
+    background-color: #f8f9ff;
+    color: #0b1c30;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Geist', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'Geist Mono', 'Fira Code', monospace;
+  }
+}
+
+/* Custom Glassmorphic Panels with Frosted Glass Inset Highlights */
+.glass-panel {
+  background-color: rgba(248, 250, 252, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 106, 97, 0.25);
+  box-shadow: 
+    0 16px 48px 0 rgba(15, 23, 42, 0.12),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(118, 119, 125, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(118, 119, 125, 0.4);
+}
+
+/* Mapbox Breathing Soft Markers */
+.marker-pulse {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  z-index: 10;
+}
+
+.marker-pulse:hover {
+  transform: scale(1.3);
+}
+
+.marker-pulse::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  animation: pulse-soft 2.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Dynamic Marker Color Mappings & Variables */
+.marker-road_hazard {
+  background-color: #ba1a1a;
+  --marker-color: #ba1a1a;
+}
+.marker-road_hazard::after {
+  box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.4);
+}
+
+.marker-water_grid {
+  background-color: #006a61;
+  --marker-color: #006a61;
+}
+.marker-water_grid::after {
+  box-shadow: 0 0 0 0 rgba(0, 106, 97, 0.4);
+}
+
+.marker-electrical_grid {
+  background-color: #ffb95f;
+  --marker-color: #ffb95f;
+}
+.marker-electrical_grid::after {
+  box-shadow: 0 0 0 0 rgba(255, 185, 95, 0.4);
+}
+
+.marker-waste_management {
+  background-color: #86f2e4;
+  --marker-color: #86f2e4;
+}
+.marker-waste_management::after {
+  box-shadow: 0 0 0 0 rgba(134, 242, 228, 0.4);
+}
+
+.marker-public_structure {
+  background-color: #ffb95f;
+  --marker-color: #ffb95f;
+}
+.marker-public_structure::after {
+  box-shadow: 0 0 0 0 rgba(255, 185, 95, 0.4);
+}
+
+.marker-resolved {
+  background-color: #006a61;
+  --marker-color: #006a61;
+}
+.marker-resolved::after {
+  box-shadow: 0 0 0 0 rgba(0, 106, 97, 0.4);
+}
+
+/* High-Visibility Animated Selection Halo */
+.marker-active-selected {
+  transform: scale(1.6) !important;
+  box-shadow: 0 0 0 2.5px #FFFFFF, 0 0 18px 4px var(--marker-color, #ffb95f), 0 0 0 6px rgba(0, 106, 97, 0.15) !important;
+  z-index: 999 !important;
+}
+
+.marker-active-selected::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border: 1.5px solid var(--marker-color, #ffb95f);
+  border-radius: 50%;
+  animation: marker-pulse-ring 1.6s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes marker-pulse-ring {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-soft {
+  0% {
+    transform: scale(0.65);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.65);
+    opacity: 0;
+  }
+}
+
+/* Organic Background Radial Vignette Overlay */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 65%, rgba(248, 249, 255, 0.95) 100%),
+    linear-gradient(rgba(0, 106, 97, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 106, 97, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-position: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ticker wrap & animation */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-right: 100%;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-name: ticker-scroll;
+  animation-duration: 20s;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+/* Organic background radial blobs animation */
+@keyframes float-slow {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, -40px) scale(1.1); }
+  100% { transform: translate(-30px, 50px) scale(0.95); }
+}
+
+.animate-float-slow {
+  animation: float-slow 20s infinite alternate ease-in-out;
+}
+
+.animate-float-slower {
+  animation: float-slow 30s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes pulse-warm {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.03); }
+}
+
+.animate-pulse-warm {
+  animation: pulse-warm 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Premium Buttons */
+.btn-civic-primary {
+  background: linear-gradient(135deg, #006a61 0%, #004d46 100%);
+  color: #ffffff;
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px 0 rgba(0, 106, 97, 0.25);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.btn-civic-primary:hover {
+  box-shadow: 0 8px 24px 0 rgba(0, 106, 97, 0.4);
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+.btn-civic-primary:active {
+  transform: scale(0.96) translateY(0px);
+}
+
+@keyframes slide-up-fade {
+  0% {
+    transform: translateY(1.5rem) translateX(-50%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) translateX(-50%);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up-fade {
+  animation: slide-up-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
